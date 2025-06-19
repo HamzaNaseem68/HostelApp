@@ -5,76 +5,7 @@ import { Dimensions, FlatList, Image, Modal, ScrollView, StyleSheet, Text, TextI
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
 import { useTheme } from './context/ThemeContext';
-
-// Placeholder data with student hostel focus
-export const hostels = [
-  { 
-    id: '1', 
-    name: 'Student Hub Downtown', 
-    location: 'Downtown', 
-    price: '$150/month', 
-    rating: 4.5, 
-    imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&auto=format&fit=crop&q=60',
-    amenities: ['Study Room', 'High-Speed WiFi', 'Laundry'],
-    type: 'Dormitory',
-    availableRooms: 5
-  },
-  { 
-    id: '2', 
-    name: 'Campus View Residences', 
-    location: 'University Area', 
-    price: '$180/month', 
-    rating: 4.0, 
-    imageUrl: 'https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=500&auto=format&fit=crop&q=60',
-    amenities: ['Library Access', 'Cafeteria', '24/7 Security'],
-    type: 'Private Room',
-    availableRooms: 3
-  },
-  { 
-    id: '3', 
-    name: 'Scholar\'s Nest', 
-    location: 'City Center', 
-    price: '$120/month', 
-    rating: 3.8, 
-    imageUrl: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&auto=format&fit=crop&q=60',
-    amenities: ['Computer Lab', 'Quiet Zone', 'Bike Storage'],
-    type: 'Dormitory',
-    availableRooms: 8
-  },
-  { 
-    id: '4', 
-    name: 'Academic Heights', 
-    location: 'Downtown', 
-    price: '$200/month', 
-    rating: 4.2, 
-    imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&auto=format&fit=crop&q=60',
-    amenities: ['Study Groups', 'Gym Access', 'Printing Facility'],
-    type: 'Private Room',
-    availableRooms: 2
-  },
-  { 
-    id: '5', 
-    name: 'Student Commons', 
-    location: 'University Area', 
-    price: '$160/month', 
-    rating: 4.7, 
-    imageUrl: 'https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=500&auto=format&fit=crop&q=60',
-    amenities: ['Group Study Rooms', 'Café', 'Sports Facilities'],
-    type: 'Dormitory',
-    availableRooms: 6
-  },
-  { 
-    id: '6', 
-    name: 'Learning Lodge', 
-    location: 'City Center', 
-    price: '$170/month', 
-    rating: 4.0, 
-    imageUrl: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&auto=format&fit=crop&q=60',
-    amenities: ['Tutoring Center', 'WiFi', 'Laundry'],
-    type: 'Private Room',
-    availableRooms: 4
-  },
-];
+import { allHostels } from './hostels';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.8;
@@ -205,8 +136,8 @@ const HomeScreen = () => {
   const [selectedType, setSelectedType] = useState(null);
   const { user } = useUser();
 
-  const locations = ['Downtown', 'University Area', 'City Center'];
-  const types = ['Dormitory', 'Private Room'];
+  const locations = ['Downtown', 'University Area', 'City Center', 'Downtown Core', 'Coastal Area', 'Old Town', 'Hillside'];
+  const types = ['Dormitory', 'Private Room', 'Double Room', 'Suite', 'Family Room', 'Cabin'];
   const priceRanges = [
     { label: 'Under $150', min: 0, max: 150 },
     { label: '$150 - $200', min: 150, max: 200 },
@@ -214,8 +145,8 @@ const HomeScreen = () => {
     { label: 'Over $250', min: 250, max: 1000 }
   ];
 
-  // Only filter by location if needed, otherwise show all
-  const filteredHostels = hostels.filter(hostel => {
+  // Use allHostels for consistency
+  const filteredHostels = allHostels.filter(hostel => {
     if (!selectedLocation) return true;
     return hostel.location && hostel.location.includes(selectedLocation);
   });
@@ -366,7 +297,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginBottom: 15,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -462,7 +392,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   hostelCard: {
-    backgroundColor: '#fff',
     borderRadius: 15,
     marginRight: 15,
     width: CARD_WIDTH,
@@ -485,7 +414,6 @@ const styles = StyleSheet.create({
   hostelName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 8,
   },
   locationContainer: {
@@ -495,7 +423,6 @@ const styles = StyleSheet.create({
   },
   hostelLocation: {
     fontSize: 14,
-    color: '#666',
     marginLeft: 4,
   },
   ratingContainer: {
@@ -505,7 +432,6 @@ const styles = StyleSheet.create({
   },
   hostelRating: {
     fontSize: 14,
-    color: '#666',
     marginLeft: 4,
   },
   amenitiesContainer: {
@@ -513,25 +439,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   amenityTag: {
-    backgroundColor: '#f0f7ff',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
     marginRight: 8,
   },
   amenityText: {
-    fontSize: 12,
-    color: '#007AFF',
   },
   hostelPrice: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 4,
   },
   availableRooms: {
-    fontSize: 14,
-    color: '#666',
   },
   locationPill: {
     flexDirection: 'row',
@@ -546,7 +466,6 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   locationText: {
-    fontSize: 14,
   },
   modalOverlay: {
     flex: 1,
@@ -564,7 +483,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   modalTitle: {
     fontSize: 20,
@@ -628,7 +546,6 @@ const styles = StyleSheet.create({
   typeText: {
     marginLeft: 4,
     fontSize: 14,
-    color: '#666',
   },
 });
 

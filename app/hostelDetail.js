@@ -2,53 +2,57 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { allHostels } from './hostels'; // Import allHostels
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from './context/ThemeContext';
+import { allHostels } from './hostels';
 
 const { width } = Dimensions.get('window');
 
 const HostelDetailScreen = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  // Use allHostels data instead of sampleHostels
-  const hostel = allHostels.find(h => h.id === id);
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  const hostel = allHostels.find(h => String(h.id) === String(id));
 
   if (!hostel) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Hostel not found!</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }] }>
+        <Text style={[styles.errorText, { color: colors.error }]}>Hostel not found!</Text>
       </View>
     );
   }
 
   const renderAmenity = (amenity) => (
     <View key={amenity} style={styles.amenityItem}>
-      <Ionicons name="checkmark-circle" size={20} color="#28a745" />
-      <Text style={styles.amenityText}>{amenity}</Text>
+      <Ionicons name="checkmark-circle" size={20} color={colors.success || '#28a745'} />
+      <Text style={[styles.amenityText, { color: colors.text }]}>{amenity}</Text>
     </View>
   );
 
   const renderRule = (rule) => (
     <View key={rule} style={styles.ruleItem}>
-      <Ionicons name="information-circle" size={20} color="#007AFF" />
-      <Text style={styles.ruleText}>{rule}</Text>
+      <Ionicons name="information-circle" size={20} color={colors.primary} />
+      <Text style={[styles.ruleText, { color: colors.text }]}>{rule}</Text>
     </View>
   );
 
   const renderUniversity = (university) => (
     <View key={university} style={styles.universityItem}>
-      <Ionicons name="school" size={20} color="#6c757d" />
-      <Text style={styles.universityText}>{university}</Text>
+      <Ionicons name="school" size={20} color={colors.textSecondary} />
+      <Text style={[styles.universityText, { color: colors.textSecondary }]}>{university}</Text>
     </View>
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} showsVerticalScrollIndicator={false}>
+      <View style={{ height: insets.top, backgroundColor: 'transparent' }} />
+      <View style={[styles.header, { backgroundColor: 'transparent' }] }>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: colors.surface }]} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.shareButton}>
-          <Ionicons name="share-outline" size={24} color="#333" />
+        <TouchableOpacity style={[styles.shareButton, { backgroundColor: colors.surface }] }>
+          <Ionicons name="share-outline" size={24} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -60,55 +64,61 @@ const HostelDetailScreen = () => {
       
       <View style={styles.content}>
         <View style={styles.titleContainer}>
-          <Text style={styles.hostelName}>{hostel.name}</Text>
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={20} color="#FFD700" />
-            <Text style={styles.ratingText}>{hostel.rating}</Text>
+          <Text style={[styles.hostelName, { color: colors.text }]}>{hostel.name}</Text>
+          <View style={[styles.ratingContainer, { backgroundColor: colors.surface }] }>
+            <Ionicons name="star" size={20} color={colors.ratingStar || '#FFD700'} />
+            <Text style={[styles.ratingText, { color: colors.textSecondary }]}>{hostel.rating}</Text>
           </View>
         </View>
 
         <View style={styles.locationContainer}>
-          <Ionicons name="location" size={20} color="#666" />
-          <Text style={styles.locationText}>{hostel.location}</Text>
+          <Ionicons name="location" size={20} color={colors.textSecondary} />
+          <Text style={[styles.locationText, { color: colors.textSecondary }]}>{hostel.location}</Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.description}>{hostel.description}</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>About</Text>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>{hostel.description}</Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Room Types</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Room Types</Text>
           {hostel.roomTypes.map((type, index) => (
             <View key={index} style={styles.roomTypeItem}>
-              <Ionicons name="bed" size={20} color="#007AFF" />
-              <Text style={styles.roomTypeText}>{type}</Text>
+              <Ionicons name="bed" size={20} color={colors.primary} />
+              <Text style={[styles.roomTypeText, { color: colors.textSecondary }]}>{type}</Text>
             </View>
           ))}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Amenities</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Amenities</Text>
           {hostel.amenities.map(renderAmenity)}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>House Rules</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>House Rules</Text>
           {hostel.rules.map(renderRule)}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Nearby Universities</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Nearby Universities</Text>
           {hostel.nearbyUniversities.map(renderUniversity)}
         </View>
       </View>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }] }>
         <TouchableOpacity
-          style={styles.bookButton}
+          style={[styles.bookButton, { backgroundColor: colors.primary }]}
           onPress={() => router.push(`/booking?hostelId=${hostel.id}`)}
         >
           <Text style={styles.bookButtonText}>Book Now</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.footerChatButton, { backgroundColor: colors.success || '#28a745' }]}
+          onPress={() => router.push('/chatPreview')}
+        >
+          <Text style={styles.chatButtonText}>Chat</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -118,7 +128,6 @@ const HostelDetailScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     position: 'absolute',
@@ -134,7 +143,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -147,7 +155,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -172,13 +179,11 @@ const styles = StyleSheet.create({
   hostelName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
     flex: 1,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 20,
@@ -187,7 +192,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
   },
   locationContainer: {
     flexDirection: 'row',
@@ -197,7 +201,6 @@ const styles = StyleSheet.create({
   locationText: {
     marginLeft: 5,
     fontSize: 16,
-    color: '#666',
   },
   section: {
     marginBottom: 25,
@@ -205,12 +208,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 15,
   },
   description: {
     fontSize: 16,
-    color: '#666',
     lineHeight: 24,
   },
   roomTypeItem: {
@@ -221,7 +222,6 @@ const styles = StyleSheet.create({
   roomTypeText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#333',
   },
   amenityItem: {
     flexDirection: 'row',
@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
   amenityText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#333',
   },
   ruleItem: {
     flexDirection: 'row',
@@ -241,7 +240,6 @@ const styles = StyleSheet.create({
   ruleText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#333',
   },
   universityItem: {
     flexDirection: 'row',
@@ -251,16 +249,12 @@ const styles = StyleSheet.create({
   universityText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#333',
   },
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
-    backgroundColor: '#fff',
   },
   bookButton: {
-    backgroundColor: '#007AFF',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -280,9 +274,25 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: 'red',
     textAlign: 'center',
     marginTop: 50,
+  },
+  footerChatButton: {
+    borderRadius: 30,
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    alignItems: 'center',
+    marginTop: 12,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  chatButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
